@@ -11,26 +11,38 @@ import MySelect from "./components/UI/select/MySelect";
 
 function App() {
   const [posts, setPosts] = useState([
-    { id: 1, title: "Javascript", body: "Description" },
-    { id: 2, title: "Javascript 2", body: "Description" },
-    { id: 3, title: "Javascript 3", body: "Description" },
+    { id: 1, title: "1", body: "Б" },
+    { id: 2, title: "3", body: "В" },
+    { id: 3, title: "2", body: "А" },
   ]);
   /*const [title, setTitle] = useState(""); // Двухстороннее связывание - 1ч
   const [body, setBody] = useState("");*/
   const [selectedSort, setSelectedSort] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  function getSortedPost() {
+    console.log("Отработала функция сортировки постов");
+    if (selectedSort) {
+      return [...posts].sort((a, b) =>
+        a[selectedSort].localeCompare(b[selectedSort]),
+      );
+    }
+    return posts;
+  }
+
+  const sortedPost = getSortedPost();
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
   };
 
   /// Получаем пост из дочернего компонента
-  const removePost = (post) => {
+  const removePosts = (post) => {
     setPosts(posts.filter((p) => p.id !== post.id));
   };
 
   const sortPosts = (sort) => {
     setSelectedSort(sort);
-    sortPosts([...posts].sort((a, b) => a[sort].localeCompare(b[sort])))
   };
 
   return (
@@ -39,6 +51,11 @@ function App() {
       <PostForm create={createPost} />
       <hr style={{ margin: "15px 0" }} />
       <div>
+        <MyInput
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Поиск..."
+        />
         <MySelect
           value={selectedSort}
           onChange={sortPosts}
@@ -50,7 +67,11 @@ function App() {
         />
       </div>
       {posts.length ? (
-        <PostList remove={removePost} posts={posts} title="Посты про JS" />
+        <PostList
+          remove={removePosts}
+          posts={sortedPost}
+          title="Посты про JS"
+        />
       ) : (
         <h1 style={{ textAlign: "center" }}>'Посты не найдены'</h1>
       )}
