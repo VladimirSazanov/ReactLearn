@@ -9,6 +9,7 @@ import MyInput from "./components/UI/input/MyInput";
 import PostForm from "./components/PostForm";
 import MySelect from "./components/UI/select/MySelect";
 import PostFilter from "./components/PostFilter";
+import MyModal from "./components/UI/MyModal/MyModal";
 
 function App() {
   const [posts, setPosts] = useState([
@@ -16,9 +17,10 @@ function App() {
     { id: 2, title: "3", body: "В" },
     { id: 3, title: "2", body: "А" },
   ]);
-  /*const [title, setTitle] = useState(""); // Двухстороннее связывание - 1ч
-  const [body, setBody] = useState("");*/
+  /*Управляемый компонент-компонент, который хранит своё значение в state, часть двухстороннего связывания*/
+  /*Двухстороннее связывание-это когда управляемый компонент отображается в UI*/
   const [filter, setFilter] = useState({ sort: "", query: "" });
+  const [modal, setModal] = useState(false);
 
   const sortedPosts = useMemo(() => {
     console.log("Отработала функция сортировки постов");
@@ -38,6 +40,7 @@ function App() {
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
+    setModal(false);
   };
 
   /// Получаем пост из дочернего компонента
@@ -47,8 +50,12 @@ function App() {
 
   return (
     <div className="App">
-      {/*Управляемый компонент*/}
-      <PostForm create={createPost} />
+      <MyButton style={{ marginTop: 30 }} onClick={() => setModal(true)}>
+        Создать пользователя
+      </MyButton>
+      <MyModal visible={modal} setVisible={setModal}>
+        <PostForm create={createPost} />
+      </MyModal>
       <hr style={{ margin: "15px 0" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
       <PostList
@@ -59,5 +66,5 @@ function App() {
     </div>
   );
 }
-// create- название пропса
+/* remove - название пропса, которое внутри компонента. removePosts - значение, которое туда передано*/
 export default App;
