@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 /*import Counter from './components/Counter';*/
 import "./styles/App.css";
 /*import ClassCounter from './components/ClassCounter';
@@ -9,23 +9,31 @@ import PostForm from "./components/PostForm";
 import PostFilter from "./components/PostFilter";
 import MyModal from "./components/UI/MyModal/MyModal";
 import { usePosts } from "./hooks/usePost";
+import axios from "axios";
 
 function App() {
-  const [posts, setPosts] = useState([
-    { id: 1, title: "1", body: "Б" },
-    { id: 2, title: "3", body: "В" },
-    { id: 3, title: "2", body: "А" },
-  ]);
+  const [posts, setPosts] = useState([]);
   /*Управляемый компонент-компонент, который хранит своё значение в state, часть двухстороннего связывания*/
   /*Двухстороннее связывание-это когда управляемый компонент отображается в UI*/
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
   const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
 
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
     setModal(false);
   };
+
+  async function fetchPosts() {
+    const response = await axios.get(
+      "http://jsonplaceholder.typicode.com/posts",
+    );
+    setPosts(response.data);
+  }
 
   /// Получаем пост из дочернего компонента
   const removePosts = (post) => {
@@ -34,6 +42,7 @@ function App() {
 
   return (
     <div className="App">
+      <button onClick={fetchPosts}>GET POSTS</button>
       <MyButton style={{ marginTop: 30 }} onClick={() => setModal(true)}>
         Создать пользователя
       </MyButton>
