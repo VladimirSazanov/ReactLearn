@@ -12,6 +12,7 @@ import { usePosts } from "./hooks/usePost";
 import axios from "axios";
 import PostService from "./API/PostService";
 import Loader from "./components/UI/Loader/Loader";
+import { useFetching } from "./hooks/useFetching";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -20,7 +21,10 @@ function App() {
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
   const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
-  const [isPostLoading, setIsPostLoading] = useState(false);
+  const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+    const posts = await PostService.getAll();
+    setPosts(posts);
+  });
 
   useEffect(() => {
     fetchPosts();
@@ -30,15 +34,6 @@ function App() {
     setPosts([...posts, newPost]);
     setModal(false);
   };
-
-  async function fetchPosts() {
-    setIsPostLoading(true);
-    setTimeout(async () => {
-      const posts = await PostService.getAll();
-      setPosts(posts);
-      setIsPostLoading(false);
-    }, 1000);
-  }
 
   /// Получаем пост из дочернего компонента
   const removePosts = (post) => {
@@ -55,7 +50,8 @@ function App() {
       </MyModal>
       <hr style={{ margin: "15px 0" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
-      {isPostLoading ? (
+      {postError && <h1>Произошла ошибка. {postError}</h1>}
+      {isPostsLoading ? (
         <div
           style={{
             display: "flex",
