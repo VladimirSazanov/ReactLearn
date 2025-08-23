@@ -3,10 +3,10 @@ import MyButton from "./UI/button/MyButton/MyButton";
 
 const PostItem = forwardRef((props, ref) => {
   return (
-    <div ref={ref} className="post">
+    <div key={props.post.id} ref={ref} className="post">
       <div className="post__content">
         <strong>
-          {props.number}. {props.post.title}
+          {props.post.id}. {props.post.title}
         </strong>
         <div>{props.post.body}</div>
       </div>

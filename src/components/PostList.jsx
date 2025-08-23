@@ -25,6 +25,7 @@ const PostList = ({ posts, title, remove }) => {
               classNames="post"
             >
               <PostItem
+                key={post.id}
                 ref={refs.current[post.id]}
                 remove={remove}
                 number={index + 1}
